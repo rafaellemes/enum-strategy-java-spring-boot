@@ -1,9 +1,8 @@
 package br.com.lemes.enumstrategy.usecase.foo;
 
 import org.springframework.stereotype.Component;
-
 @Component
-class FooStrategyImpl1 implements FooStrategy{
+final class FooStrategyImpl1 implements FooStrategy{
 
      @Override
      public String execute() {

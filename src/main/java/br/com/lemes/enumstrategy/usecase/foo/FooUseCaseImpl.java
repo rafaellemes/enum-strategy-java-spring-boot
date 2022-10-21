@@ -1,19 +1,23 @@
 package br.com.lemes.enumstrategy.usecase.foo;
 
 
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
-class FooUseCaseImpl implements FooUseCase {
+final class FooUseCaseImpl implements FooUseCase {
 
+    @NonNull
     private final ApplicationContext context;
+
 
 
     @Override
@@ -55,19 +59,20 @@ class FooUseCaseImpl implements FooUseCase {
             //(Obs: Pode haver Estratégias iguais para Id diferentes e estar correto,
             // assim como poderia ser um erro de implementação
 
-
+            Objects.requireNonNull(id);
             Supplier<Stream<FooEnumStrategy>> fooEnumStrategyStream
                     = () -> Stream.of(values())
                     .filter(strategy -> strategy.id.equals(id));
 
 
             if(fooEnumStrategyStream.get().count() > 1){
-                FooEnumStrategy fooEnumStrategy = fooEnumStrategyStream
+                fooEnumStrategyStream
                         .get()
                         .findFirst()
-                        .orElseThrow();
-                throw new RuntimeException (
-                        String.format("Same id For 2 different Strategy %s ", fooEnumStrategy.id));
+                        .ifPresent(strategy -> {
+                            throw new RuntimeException(
+                                    String.format("Same id For 2 or more different Strategy: %s ", strategy.id));
+                        });
             }
 
 
